@@ -1,0 +1,41 @@
+name: FanPass Ticket Watcher
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # toutes les 15 minutes (UTC)
+  workflow_dispatch: {}       # permet aussi un lancement manuel depuis l'onglet Actions
+
+permissions:
+  contents: write            # nécessaire pour committer state.json
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Lancer le watcher
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TICKET_URL: ${{ vars.TICKET_URL }}
+          MAX_PRICE: ${{ vars.MAX_PRICE }}
+          MIN_QUANTITY: ${{ vars.MIN_QUANTITY }}
+        run: python ticket_watcher.py
+
+      - name: Sauvegarder l'état (déduplication des alertes)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || git commit -m "chore: update ticket watcher state [skip ci]"
+          git push
