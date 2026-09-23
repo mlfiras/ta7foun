@@ -2,7 +2,7 @@ name: FanPass Ticket Watcher
 
 on:
   schedule:
-    - cron: "*/15 * * * *"   # toutes les 15 minutes (UTC)
+    - cron: "*/1 * * * *"   # toutes les 1 minute (UTC)
   workflow_dispatch: {}       # permet aussi un lancement manuel depuis l'onglet Actions
 
 permissions:
