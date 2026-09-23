@@ -2,7 +2,7 @@ name: FanPass Ticket Watcher
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # toutes les 5 minutes (UTC) — minimum autorisé par GitHub
+    - cron: "7,22,37,52 * * * *"   # toutes les 15 min, décalé du :00/:15/:30/:45 pour éviter les pics de charge GitHub
   workflow_dispatch: {}       # permet aussi un lancement manuel depuis l'onglet Actions
 
 permissions:
