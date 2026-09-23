@@ -88,7 +88,10 @@ def find_matching_offers(text: str) -> list[dict]:
 def load_state() -> set[str]:
     if not STATE_FILE.exists():
         return set()
-    return set(json.loads(STATE_FILE.read_text(encoding="utf-8")))
+    raw = STATE_FILE.read_text(encoding="utf-8").strip()
+    if not raw:
+        return set()
+    return set(json.loads(raw))
 
 
 def save_state(signatures: set[str]) -> None:
